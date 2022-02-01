@@ -1,7 +1,3 @@
-# dataProcessing
+# MTA API
 
-Collecting and organizing relavent data from the MTA & Google Maps' API
-
-Exports CSV to be handled in data stuctures & algorithms repo
-
-- Processes all station and their neighboring stations
+Utilize data from the MTA API with the python library, NYCT-GTFS, to gather regarding the stations and their neighbors. 
