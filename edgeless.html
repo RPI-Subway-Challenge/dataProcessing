@@ -1,0 +1,204 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 500px;
+            height: 500px;
+            background-color: #ffffff;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 500px;
+            height: 500px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"id": "NAME", "label": "NAME", "shape": "dot"}, {"id": "Astor Pl", "label": "Astor Pl", "shape": "dot"}, {"id": "Canal St", "label": "Canal St", "shape": "dot"}, {"id": "50th St", "label": "50th St", "shape": "dot"}, {"id": "Bergen St", "label": "Bergen St", "shape": "dot"}, {"id": "Pennsylvania Ave", "label": "Pennsylvania Ave", "shape": "dot"}, {"id": "238th St", "label": "238th St", "shape": "dot"}, {"id": "Cathedral Pkwy (110th St)", "label": "Cathedral Pkwy (110th St)", "shape": "dot"}, {"id": "Kingston - Throop Aves", "label": "Kingston - Throop Aves", "shape": "dot"}, {"id": "65th St", "label": "65th St", "shape": "dot"}, {"id": "36th St", "label": "36th St", "shape": "dot"}, {"id": "Delancey St - Essex St", "label": "Delancey St - Essex St", "shape": "dot"}, {"id": "Van Siclen Ave", "label": "Van Siclen Ave", "shape": "dot"}, {"id": "Norwood Ave", "label": "Norwood Ave", "shape": "dot"}, {"id": "104th-102nd Sts", "label": "104th-102nd Sts", "shape": "dot"}, {"id": "DeKalb Ave", "label": "DeKalb Ave", "shape": "dot"}, {"id": "Beach 105th St", "label": "Beach 105th St", "shape": "dot"}, {"id": "Beach 90th St", "label": "Beach 90th St", "shape": "dot"}, {"id": "Freeman St", "label": "Freeman St", "shape": "dot"}, {"id": "Intervale Ave", "label": "Intervale Ave", "shape": "dot"}, {"id": "182nd-183rd Sts", "label": "182nd-183rd Sts", "shape": "dot"}, {"id": "174th-175th Sts", "label": "174th-175th Sts", "shape": "dot"}, {"id": "167th St", "label": "167th St", "shape": "dot"}, {"id": "Mets - Willets Point", "label": "Mets - Willets Point", "shape": "dot"}, {"id": "Junction Blvd", "label": "Junction Blvd", "shape": "dot"}, {"id": "Flushing - Main St", "label": "Flushing - Main St", "shape": "dot"}, {"id": "Buhre Ave", "label": "Buhre Ave", "shape": "dot"}, {"id": "3rd Ave - 138th St", "label": "3rd Ave - 138th St", "shape": "dot"}, {"id": "Castle Hill Ave", "label": "Castle Hill Ave", "shape": "dot"}, {"id": "Brooklyn Bridge - City Hall", "label": "Brooklyn Bridge - City Hall", "shape": "dot"}, {"id": "Zerega Ave", "label": "Zerega Ave", "shape": "dot"}, {"id": "Grand Central - 42nd St", "label": "Grand Central - 42nd St", "shape": "dot"}, {"id": "33rd St", "label": "33rd St", "shape": "dot"}, {"id": "96th St", "label": "96th St", "shape": "dot"}, {"id": "77th St", "label": "77th St", "shape": "dot"}, {"id": "Chauncey St", "label": "Chauncey St", "shape": "dot"}, {"id": "Union St", "label": "Union St", "shape": "dot"}, {"id": "Elmhurst Ave", "label": "Elmhurst Ave", "shape": "dot"}, {"id": "Ralph Ave", "label": "Ralph Ave", "shape": "dot"}, {"id": "Pelham Pkwy", "label": "Pelham Pkwy", "shape": "dot"}, {"id": "Gun Hill Rd", "label": "Gun Hill Rd", "shape": "dot"}, {"id": "Nereid Ave (238 St)", "label": "Nereid Ave (238 St)", "shape": "dot"}, {"id": "Franklin Ave", "label": "Franklin Ave", "shape": "dot"}, {"id": "Simpson St", "label": "Simpson St", "shape": "dot"}, {"id": "Bronx Park East", "label": "Bronx Park East", "shape": "dot"}, {"id": "Winthrop St", "label": "Winthrop St", "shape": "dot"}, {"id": "149th St - Grand Concourse", "label": "149th St - Grand Concourse", "shape": "dot"}, {"id": "161st St - Yankee Stadium", "label": "161st St - Yankee Stadium", "shape": "dot"}, {"id": "Lexington Ave - 59th St", "label": "Lexington Ave - 59th St", "shape": "dot"}, {"id": "E 149th St", "label": "E 149th St", "shape": "dot"}, {"id": "Morrison Av - Soundview", "label": "Morrison Av - Soundview", "shape": "dot"}, {"id": "Whitlock Ave", "label": "Whitlock Ave", "shape": "dot"}, {"id": "St Lawrence Ave", "label": "St Lawrence Ave", "shape": "dot"}, {"id": "Woodside - 61st St", "label": "Woodside - 61st St", "shape": "dot"}, {"id": "Far Rockaway - Mott Ave", "label": "Far Rockaway - Mott Ave", "shape": "dot"}, {"id": "72nd St", "label": "72nd St", "shape": "dot"}, {"id": "168th St", "label": "168th St", "shape": "dot"}, {"id": "Kingsbridge Rd", "label": "Kingsbridge Rd", "shape": "dot"}, {"id": "42nd St - Bryant Pk", "label": "42nd St - Bryant Pk", "shape": "dot"}, {"id": "Prospect Park", "label": "Prospect Park", "shape": "dot"}, {"id": "55th St", "label": "55th St", "shape": "dot"}, {"id": "Jamaica - Van Wyck", "label": "Jamaica - Van Wyck", "shape": "dot"}, {"id": "Kew Gardens - Union Tpke", "label": "Kew Gardens - Union Tpke", "shape": "dot"}, {"id": "Sutphin Blvd - Archer Av", "label": "Sutphin Blvd - Archer Av", "shape": "dot"}, {"id": "Court Sq - 23rd St", "label": "Court Sq - 23rd St", "shape": "dot"}, {"id": "67th Ave", "label": "67th Ave", "shape": "dot"}, {"id": "Grand Ave - Newtown", "label": "Grand Ave - Newtown", "shape": "dot"}, {"id": "Ditmas Ave", "label": "Ditmas Ave", "shape": "dot"}, {"id": "Classon Ave", "label": "Classon Ave", "shape": "dot"}, {"id": "Broadway", "label": "Broadway", "shape": "dot"}, {"id": "Lorimer St", "label": "Lorimer St", "shape": "dot"}, {"id": "Sutter Ave", "label": "Sutter Ave", "shape": "dot"}, {"id": "Wilson Ave", "label": "Wilson Ave", "shape": "dot"}, {"id": "Halsey St", "label": "Halsey St", "shape": "dot"}, {"id": "8th Ave", "label": "8th Ave", "shape": "dot"}, {"id": "36th Ave", "label": "36th Ave", "shape": "dot"}, {"id": "Times Sq - 42nd St", "label": "Times Sq - 42nd St", "shape": "dot"}, {"id": "Park Pl", "label": "Park Pl", "shape": "dot"}, {"id": "111th St", "label": "111th St", "shape": "dot"}, {"id": "W 4th St - Washington Sq (Lower)", "label": "W 4th St - Washington Sq (Lower)", "shape": "dot"}, {"id": "51st St", "label": "51st St", "shape": "dot"}, {"id": "86th St", "label": "86th St", "shape": "dot"}, {"id": "233rd St", "label": "233rd St", "shape": "dot"}, {"id": "66th St - Lincoln Ctr", "label": "66th St - Lincoln Ctr", "shape": "dot"}, {"id": "Hunts Point Ave", "label": "Hunts Point Ave", "shape": "dot"}, {"id": "Middletown Rd", "label": "Middletown Rd", "shape": "dot"}, {"id": "23rd St", "label": "23rd St", "shape": "dot"}, {"id": "Court Sq", "label": "Court Sq", "shape": "dot"}, {"id": "59th St - Columbus Circle", "label": "59th St - Columbus Circle", "shape": "dot"}, {"id": "Hunters Point Ave", "label": "Hunters Point Ave", "shape": "dot"}, {"id": "Houston St", "label": "Houston St", "shape": "dot"}, {"id": "104th St", "label": "104th St", "shape": "dot"}, {"id": "Broad Channel", "label": "Broad Channel", "shape": "dot"}, {"id": "Ocean Pkwy", "label": "Ocean Pkwy", "shape": "dot"}, {"id": "Vernon Blvd - Jackson Ave", "label": "Vernon Blvd - Jackson Ave", "shape": "dot"}, {"id": "68th St - Hunter College", "label": "68th St - Hunter College", "shape": "dot"}, {"id": "Queensboro Plz", "label": "Queensboro Plz", "shape": "dot"}, {"id": "Rockaway Blvd", "label": "Rockaway Blvd", "shape": "dot"}, {"id": "Union Sq - 14th St", "label": "Union Sq - 14th St", "shape": "dot"}, {"id": "Bedford - Nostrand Aves", "label": "Bedford - Nostrand Aves", "shape": "dot"}, {"id": "15th St - Prospect Park", "label": "15th St - Prospect Park", "shape": "dot"}, {"id": "7th Ave", "label": "7th Ave", "shape": "dot"}, {"id": "Ft Hamilton Pkwy", "label": "Ft Hamilton Pkwy", "shape": "dot"}, {"id": "Church Ave", "label": "Church Ave", "shape": "dot"}, {"id": "Beverly Rd", "label": "Beverly Rd", "shape": "dot"}, {"id": "Newkirk Ave", "label": "Newkirk Ave", "shape": "dot"}, {"id": "Parkside Ave", "label": "Parkside Ave", "shape": "dot"}, {"id": "Grand Army Plaza", "label": "Grand Army Plaza", "shape": "dot"}, {"id": "Atlantic Av - Barclay\u0027s Center", "label": "Atlantic Av - Barclay\u0027s Center", "shape": "dot"}, {"id": "Rockaway Ave", "label": "Rockaway Ave", "shape": "dot"}, {"id": "Fulton St", "label": "Fulton St", "shape": "dot"}, {"id": "Clinton - Washington Aves", "label": "Clinton - Washington Aves", "shape": "dot"}, {"id": "Borough Hall", "label": "Borough Hall", "shape": "dot"}, {"id": "Aqueduct Racetrack", "label": "Aqueduct Racetrack", "shape": "dot"}, {"id": "Morris Park", "label": "Morris Park", "shape": "dot"}, {"id": "Nostrand Ave", "label": "Nostrand Ave", "shape": "dot"}, {"id": "Nevins St", "label": "Nevins St", "shape": "dot"}, {"id": "Eastern Pkwy - Bklyn Museum", "label": "Eastern Pkwy - Bklyn Museum", "shape": "dot"}, {"id": "Brooklyn College - Flatbush Ave", "label": "Brooklyn College - Flatbush Ave", "shape": "dot"}, {"id": "Sterling St", "label": "Sterling St", "shape": "dot"}, {"id": "Crown Hts - Utica Ave", "label": "Crown Hts - Utica Ave", "shape": "dot"}, {"id": "Kingston Ave", "label": "Kingston Ave", "shape": "dot"}, {"id": "Nassau Ave", "label": "Nassau Ave", "shape": "dot"}, {"id": "Greenpoint Ave", "label": "Greenpoint Ave", "shape": "dot"}, {"id": "Marcy Ave", "label": "Marcy Ave", "shape": "dot"}, {"id": "Hewes St", "label": "Hewes St", "shape": "dot"}, {"id": "138th St - Grand Concourse", "label": "138th St - Grand Concourse", "shape": "dot"}, {"id": "5th Ave - 53rd St", "label": "5th Ave - 53rd St", "shape": "dot"}, {"id": "Lexington Ave - 53rd St", "label": "Lexington Ave - 53rd St", "shape": "dot"}, {"id": "28th St", "label": "28th St", "shape": "dot"}, {"id": "Herald Sq - 34th St", "label": "Herald Sq - 34th St", "shape": "dot"}, {"id": "1st Ave", "label": "1st Ave", "shape": "dot"}, {"id": "Metropolitan Ave", "label": "Metropolitan Ave", "shape": "dot"}, {"id": "Grand St", "label": "Grand St", "shape": "dot"}, {"id": "Graham Ave", "label": "Graham Ave", "shape": "dot"}, {"id": "Bedford Ave", "label": "Bedford Ave", "shape": "dot"}, {"id": "Montrose Ave", "label": "Montrose Ave", "shape": "dot"}, {"id": "Long Island City - Court Sq", "label": "Long Island City - Court Sq", "shape": "dot"}, {"id": "21st St", "label": "21st St", "shape": "dot"}, {"id": "39th Ave", "label": "39th Ave", "shape": "dot"}, {"id": "145th St", "label": "145th St", "shape": "dot"}, {"id": "157th St", "label": "157th St", "shape": "dot"}, {"id": "103rd St", "label": "103rd St", "shape": "dot"}, {"id": "Central Park North (110th St)", "label": "Central Park North (110th St)", "shape": "dot"}, {"id": "81st St", "label": "81st St", "shape": "dot"}, {"id": "75th Ave", "label": "75th Ave", "shape": "dot"}, {"id": "116th St - Columbia University", "label": "116th St - Columbia University", "shape": "dot"}, {"id": "125th St", "label": "125th St", "shape": "dot"}, {"id": "135th St", "label": "135th St", "shape": "dot"}, {"id": "116th St", "label": "116th St", "shape": "dot"}, {"id": "Tremont Ave", "label": "Tremont Ave", "shape": "dot"}, {"id": "137th St - City College", "label": "137th St - City College", "shape": "dot"}, {"id": "176th St", "label": "176th St", "shape": "dot"}, {"id": "Burnside Ave", "label": "Burnside Ave", "shape": "dot"}, {"id": "170th St", "label": "170th St", "shape": "dot"}, {"id": "181st St", "label": "181st St", "shape": "dot"}, {"id": "191st St", "label": "191st St", "shape": "dot"}, {"id": "175th St", "label": "175th St", "shape": "dot"}, {"id": "Beach 44th St", "label": "Beach 44th St", "shape": "dot"}, {"id": "Beach 60th St", "label": "Beach 60th St", "shape": "dot"}, {"id": "Beach 98th St", "label": "Beach 98th St", "shape": "dot"}, {"id": "Rockaway Park - Beach 116 St", "label": "Rockaway Park - Beach 116 St", "shape": "dot"}, {"id": "Beach 36th St", "label": "Beach 36th St", "shape": "dot"}, {"id": "Beach 25th St", "label": "Beach 25th St", "shape": "dot"}, {"id": "Parsons Blvd", "label": "Parsons Blvd", "shape": "dot"}, {"id": "169th St", "label": "169th St", "shape": "dot"}, {"id": "103rd St - Corona Plaza", "label": "103rd St - Corona Plaza", "shape": "dot"}, {"id": "63rd Dr - Rego Park", "label": "63rd Dr - Rego Park", "shape": "dot"}, {"id": "Grant Ave", "label": "Grant Ave", "shape": "dot"}, {"id": "79th St", "label": "79th St", "shape": "dot"}, {"id": "Atlantic Ave", "label": "Atlantic Ave", "shape": "dot"}, {"id": "Christopher St - Sheridan Sq", "label": "Christopher St - Sheridan Sq", "shape": "dot"}, {"id": "Ozone Park - Lefferts Blvd", "label": "Ozone Park - Lefferts Blvd", "shape": "dot"}, {"id": "W 8th St - NY Aquarium", "label": "W 8th St - NY Aquarium", "shape": "dot"}, {"id": "Pelham Bay Park", "label": "Pelham Bay Park", "shape": "dot"}, {"id": "Westchester Sq - E Tremont Ave", "label": "Westchester Sq - E Tremont Ave", "shape": "dot"}, {"id": "18th St", "label": "18th St", "shape": "dot"}, {"id": "Beach 67th St", "label": "Beach 67th St", "shape": "dot"}, {"id": "W 4th St - Washington Sq (Upper)", "label": "W 4th St - Washington Sq (Upper)", "shape": "dot"}, {"id": "85th St - Forest Pky", "label": "85th St - Forest Pky", "shape": "dot"}, {"id": "Woodhaven Blvd", "label": "Woodhaven Blvd", "shape": "dot"}, {"id": "121st St", "label": "121st St", "shape": "dot"}, {"id": "Myrtle - Wyckoff Aves", "label": "Myrtle - Wyckoff Aves", "shape": "dot"}, {"id": "New Lots Ave", "label": "New Lots Ave", "shape": "dot"}, {"id": "Cleveland St", "label": "Cleveland St", "shape": "dot"}, {"id": "Livonia Ave", "label": "Livonia Ave", "shape": "dot"}, {"id": "Junius St", "label": "Junius St", "shape": "dot"}, {"id": "Canarsie - Rockaway Pkwy", "label": "Canarsie - Rockaway Pkwy", "shape": "dot"}, {"id": "E 105th St", "label": "E 105th St", "shape": "dot"}, {"id": "Saratoga Ave", "label": "Saratoga Ave", "shape": "dot"}, {"id": "Sutter Ave - Rutland Road", "label": "Sutter Ave - Rutland Road", "shape": "dot"}, {"id": "Broadway Junction", "label": "Broadway Junction", "shape": "dot"}, {"id": "Alabama Ave", "label": "Alabama Ave", "shape": "dot"}, {"id": "Shepherd Ave", "label": "Shepherd Ave", "shape": "dot"}, {"id": "Crescent St", "label": "Crescent St", "shape": "dot"}, {"id": "Cypress Hills", "label": "Cypress Hills", "shape": "dot"}, {"id": "75th St - Eldert Ln", "label": "75th St - Eldert Ln", "shape": "dot"}, {"id": "69th St", "label": "69th St", "shape": "dot"}, {"id": "74th St - Broadway", "label": "74th St - Broadway", "shape": "dot"}, {"id": "Woodhaven Blvd - Queens Mall", "label": "Woodhaven Blvd - Queens Mall", "shape": "dot"}, {"id": "Seneca Ave", "label": "Seneca Ave", "shape": "dot"}, {"id": "52nd St", "label": "52nd St", "shape": "dot"}, {"id": "46th St", "label": "46th St", "shape": "dot"}, {"id": "Northern Blvd", "label": "Northern Blvd", "shape": "dot"}, {"id": "82nd St - Jackson Hts", "label": "82nd St - Jackson Hts", "shape": "dot"}, {"id": "90th St - Elmhurst Av", "label": "90th St - Elmhurst Av", "shape": "dot"}, {"id": "Howard Beach - JFK Airport", "label": "Howard Beach - JFK Airport", "shape": "dot"}, {"id": "Aqueduct - North Conduit Av", "label": "Aqueduct - North Conduit Av", "shape": "dot"}, {"id": "Briarwood - Van Wyck Blvd", "label": "Briarwood - Van Wyck Blvd", "shape": "dot"}, {"id": "Forest Hills - 71st Av", "label": "Forest Hills - 71st Av", "shape": "dot"}, {"id": "Sutphin Blvd", "label": "Sutphin Blvd", "shape": "dot"}, {"id": "Jamaica Ctr - Parsons / Archer", "label": "Jamaica Ctr - Parsons / Archer", "shape": "dot"}, {"id": "225th St", "label": "225th St", "shape": "dot"}, {"id": "Elder Ave", "label": "Elder Ave", "shape": "dot"}, {"id": "Longwood Ave", "label": "Longwood Ave", "shape": "dot"}, {"id": "Astoria Blvd", "label": "Astoria Blvd", "shape": "dot"}, {"id": "Astoria - Ditmars Blvd", "label": "Astoria - Ditmars Blvd", "shape": "dot"}, {"id": "Jackson Ave", "label": "Jackson Ave", "shape": "dot"}, {"id": "Prospect Ave", "label": "Prospect Ave", "shape": "dot"}, {"id": "Cypress Ave", "label": "Cypress Ave", "shape": "dot"}, {"id": "174th St", "label": "174th St", "shape": "dot"}, {"id": "Allerton Ave", "label": "Allerton Ave", "shape": "dot"}, {"id": "E 143rd St - St Mary\u0027s St", "label": "E 143rd St - St Mary\u0027s St", "shape": "dot"}, {"id": "Bedford Park Blvd - Lehman College", "label": "Bedford Park Blvd - Lehman College", "shape": "dot"}, {"id": "Harlem - 148 St", "label": "Harlem - 148 St", "shape": "dot"}, {"id": "Mt Eden Ave", "label": "Mt Eden Ave", "shape": "dot"}, {"id": "Fordham Rd", "label": "Fordham Rd", "shape": "dot"}, {"id": "Bedford Park Blvd", "label": "Bedford Park Blvd", "shape": "dot"}, {"id": "Marble Hill - 225th St", "label": "Marble Hill - 225th St", "shape": "dot"}, {"id": "231st St", "label": "231st St", "shape": "dot"}, {"id": "215th St", "label": "215th St", "shape": "dot"}, {"id": "207th St", "label": "207th St", "shape": "dot"}, {"id": "Inwood - 207th St", "label": "Inwood - 207th St", "shape": "dot"}, {"id": "Van Cortlandt Park - 242nd St", "label": "Van Cortlandt Park - 242nd St", "shape": "dot"}, {"id": "West Farms Sq - E Tremont Av", "label": "West Farms Sq - E Tremont Av", "shape": "dot"}, {"id": "219th St", "label": "219th St", "shape": "dot"}, {"id": "Mosholu Pkwy", "label": "Mosholu Pkwy", "shape": "dot"}, {"id": "Norwood - 205th St", "label": "Norwood - 205th St", "shape": "dot"}, {"id": "Burke Ave", "label": "Burke Ave", "shape": "dot"}, {"id": "Baychester Ave", "label": "Baychester Ave", "shape": "dot"}, {"id": "Eastchester - Dyre Ave", "label": "Eastchester - Dyre Ave", "shape": "dot"}, {"id": "Jamaica - 179th St", "label": "Jamaica - 179th St", "shape": "dot"}, {"id": "Wakefield - 241st St", "label": "Wakefield - 241st St", "shape": "dot"}, {"id": "Botanic Garden", "label": "Botanic Garden", "shape": "dot"}, {"id": "Bushwick - Aberdeen", "label": "Bushwick - Aberdeen", "shape": "dot"}, {"id": "E 180th St", "label": "E 180th St", "shape": "dot"}, {"id": "Dyckman St", "label": "Dyckman St", "shape": "dot"}, {"id": "Franklin Ave - Fulton St", "label": "Franklin Ave - Fulton St", "shape": "dot"}, {"id": "3rd Ave - 149th St", "label": "3rd Ave - 149th St", "shape": "dot"}, {"id": "Brook Ave", "label": "Brook Ave", "shape": "dot"}, {"id": "40th St", "label": "40th St", "shape": "dot"}, {"id": "155th St", "label": "155th St", "shape": "dot"}, {"id": "Utica Ave", "label": "Utica Ave", "shape": "dot"}, {"id": "Steinway St", "label": "Steinway St", "shape": "dot"}, {"id": "Kosciuszko St", "label": "Kosciuszko St", "shape": "dot"}, {"id": "Gates Ave", "label": "Gates Ave", "shape": "dot"}, {"id": "Central Ave", "label": "Central Ave", "shape": "dot"}, {"id": "Knickerbocker Ave", "label": "Knickerbocker Ave", "shape": "dot"}, {"id": "30th Ave", "label": "30th Ave", "shape": "dot"}, {"id": "Jefferson St", "label": "Jefferson St", "shape": "dot"}, {"id": "Morgan Ave", "label": "Morgan Ave", "shape": "dot"}, {"id": "Queens Plz", "label": "Queens Plz", "shape": "dot"}, {"id": "18th Ave", "label": "18th Ave", "shape": "dot"}, {"id": "Bay Ridge Ave", "label": "Bay Ridge Ave", "shape": "dot"}, {"id": "25th Ave", "label": "25th Ave", "shape": "dot"}, {"id": "Bay Pky", "label": "Bay Pky", "shape": "dot"}, {"id": "20th Ave", "label": "20th Ave", "shape": "dot"}, {"id": "Bay Ridge - 95th St", "label": "Bay Ridge - 95th St", "shape": "dot"}, {"id": "71st St", "label": "71st St", "shape": "dot"}, {"id": "62nd St", "label": "62nd St", "shape": "dot"}, {"id": "New Utrecht Ave", "label": "New Utrecht Ave", "shape": "dot"}, {"id": "Ave U", "label": "Ave U", "shape": "dot"}, {"id": "Kings Hwy", "label": "Kings Hwy", "shape": "dot"}, {"id": "Brighton Beach", "label": "Brighton Beach", "shape": "dot"}, {"id": "Sheepshead Bay", "label": "Sheepshead Bay", "shape": "dot"}, {"id": "Neptune Ave", "label": "Neptune Ave", "shape": "dot"}, {"id": "Ave X", "label": "Ave X", "shape": "dot"}, {"id": "Bay 50th St", "label": "Bay 50th St", "shape": "dot"}, {"id": "Gravesend - 86th St", "label": "Gravesend - 86th St", "shape": "dot"}, {"id": "Ave P", "label": "Ave P", "shape": "dot"}, {"id": "Ave N", "label": "Ave N", "shape": "dot"}, {"id": "Ave M", "label": "Ave M", "shape": "dot"}, {"id": "Ave I", "label": "Ave I", "shape": "dot"}, {"id": "Ave J", "label": "Ave J", "shape": "dot"}, {"id": "Ave H", "label": "Ave H", "shape": "dot"}, {"id": "Neck Rd", "label": "Neck Rd", "shape": "dot"}, {"id": "21st St - Queensbridge", "label": "21st St - Queensbridge", "shape": "dot"}, {"id": "47th-50th Sts - Rockefeller Ctr", "label": "47th-50th Sts - Rockefeller Ctr", "shape": "dot"}, {"id": "57th St", "label": "57th St", "shape": "dot"}, {"id": "Lexington Ave - 63rd St", "label": "Lexington Ave - 63rd St", "shape": "dot"}, {"id": "Roosevelt Island - Main St", "label": "Roosevelt Island - Main St", "shape": "dot"}, {"id": "49th St", "label": "49th St", "shape": "dot"}, {"id": "5th Ave - 59th St", "label": "5th Ave - 59th St", "shape": "dot"}, {"id": "34th St - Penn Station", "label": "34th St - Penn Station", "shape": "dot"}, {"id": "Chambers St", "label": "Chambers St", "shape": "dot"}, {"id": "42nd St - Port Authority Bus Term", "label": "42nd St - Port Authority Bus Term", "shape": "dot"}, {"id": "Myrtle-Willoughby Aves", "label": "Myrtle-Willoughby Aves", "shape": "dot"}, {"id": "Flushing Ave", "label": "Flushing Ave", "shape": "dot"}, {"id": "Hoyt - Schermerhorn Sts", "label": "Hoyt - Schermerhorn Sts", "shape": "dot"}, {"id": "Jay St - MetroTech", "label": "Jay St - MetroTech", "shape": "dot"}, {"id": "East Broadway", "label": "East Broadway", "shape": "dot"}, {"id": "Lower East Side - 2nd Ave", "label": "Lower East Side - 2nd Ave", "shape": "dot"}, {"id": "Myrtle Ave", "label": "Myrtle Ave", "shape": "dot"}, {"id": "4th Av - 9th St", "label": "4th Av - 9th St", "shape": "dot"}, {"id": "Smith - 9th Sts", "label": "Smith - 9th Sts", "shape": "dot"}, {"id": "Court St", "label": "Court St", "shape": "dot"}, {"id": "3rd Ave", "label": "3rd Ave", "shape": "dot"}, {"id": "Liberty Ave", "label": "Liberty Ave", "shape": "dot"}, {"id": "59th St", "label": "59th St", "shape": "dot"}, {"id": "45th St", "label": "45th St", "shape": "dot"}, {"id": "9th Ave", "label": "9th Ave", "shape": "dot"}, {"id": "53rd St", "label": "53rd St", "shape": "dot"}, {"id": "25th St", "label": "25th St", "shape": "dot"}, {"id": "Carroll St", "label": "Carroll St", "shape": "dot"}, {"id": "Spring St", "label": "Spring St", "shape": "dot"}, {"id": "190th St", "label": "190th St", "shape": "dot"}, {"id": "Prince St", "label": "Prince St", "shape": "dot"}, {"id": "8th St - NYU", "label": "8th St - NYU", "shape": "dot"}, {"id": "Hoyt St", "label": "Hoyt St", "shape": "dot"}, {"id": "183rd St", "label": "183rd St", "shape": "dot"}, {"id": "World Trade Center", "label": "World Trade Center", "shape": "dot"}, {"id": "Canal St - Holland Tunnel", "label": "Canal St - Holland Tunnel", "shape": "dot"}, {"id": "163rd St - Amsterdam Av", "label": "163rd St - Amsterdam Av", "shape": "dot"}, {"id": "City Hall", "label": "City Hall", "shape": "dot"}, {"id": "South Ferry", "label": "South Ferry", "shape": "dot"}, {"id": "Bowling Green", "label": "Bowling Green", "shape": "dot"}, {"id": "Wall St", "label": "Wall St", "shape": "dot"}, {"id": "Whitehall St", "label": "Whitehall St", "shape": "dot"}, {"id": "Rector St", "label": "Rector St", "shape": "dot"}, {"id": "Fresh Pond Rd", "label": "Fresh Pond Rd", "shape": "dot"}, {"id": "Middle Village - Metropolitan Ave", "label": "Middle Village - Metropolitan Ave", "shape": "dot"}, {"id": "Cortlandt St", "label": "Cortlandt St", "shape": "dot"}, {"id": "Broad St", "label": "Broad St", "shape": "dot"}, {"id": "Broadway - Lafayette St", "label": "Broadway - Lafayette St", "shape": "dot"}, {"id": "Bowery", "label": "Bowery", "shape": "dot"}, {"id": "Jackson Hts - Roosevelt Av", "label": "Jackson Hts - Roosevelt Av", "shape": "dot"}, {"id": "14th St", "label": "14th St", "shape": "dot"}, {"id": "6th Ave", "label": "6th Ave", "shape": "dot"}, {"id": "Clark St", "label": "Clark St", "shape": "dot"}, {"id": "Forest Ave", "label": "Forest Ave", "shape": "dot"}, {"id": "110th St", "label": "110th St", "shape": "dot"}, {"id": "York St", "label": "York St", "shape": "dot"}, {"id": "High St", "label": "High St", "shape": "dot"}, {"id": "Lafayette Ave", "label": "Lafayette Ave", "shape": "dot"}, {"id": "President St", "label": "President St", "shape": "dot"}, {"id": "Woodlawn", "label": "Woodlawn", "shape": "dot"}, {"id": "Bleecker St", "label": "Bleecker St", "shape": "dot"}, {"id": "Euclid Ave", "label": "Euclid Ave", "shape": "dot"}, {"id": "88th St", "label": "88th St", "shape": "dot"}, {"id": "Cortelyou Rd", "label": "Cortelyou Rd", "shape": "dot"}, {"id": "Parkchester", "label": "Parkchester", "shape": "dot"}, {"id": "Franklin St", "label": "Franklin St", "shape": "dot"}, {"id": "80th St", "label": "80th St", "shape": "dot"}, {"id": "5th Ave - Bryant Pk", "label": "5th Ave - Bryant Pk", "shape": "dot"}, {"id": "Coney Island - Stillwell Av", "label": "Coney Island - Stillwell Av", "shape": "dot"}, {"id": "34th St - Hudson Yards", "label": "34th St - Hudson Yards", "shape": "dot"}]);
+        edges = new vis.DataSet([]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
