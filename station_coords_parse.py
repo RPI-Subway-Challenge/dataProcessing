@@ -53,10 +53,10 @@ class Station_Coords:
             for i in range(len(self.station_data)):
                 if len(self.station_data[i]) < 4:
                     j+=1
-            print(f"num less than 3: {j}")
+            #print(f"num less than 3: {j}")
 
     def dist(self, lat1: float, lon1: float, lat2: float, lon2: float):
-        return ((lat2-lat1)**2 + (lon2-lon1)**2)**.5
+        return ((lat2-lat1)**2 + (lon2-lon1)**2)**(.5)
 
     #given a station and a line, return station id
     def get_station_id(self, station: str, line: str) -> int:
@@ -70,8 +70,8 @@ class Station_Coords:
     #given lat and lon return index
     def find_station_index(self, name: str, lat: float, lon: float) -> int:
         EPSILON = 0.0005
-        to_return = 1
-        min_dist = 1000
+        to_return = -1
+        min_dist = 10000
         temp_name = ""
         l = []
         for i in range(len(self.station_data)):
@@ -109,16 +109,18 @@ class Station_Coords:
         return station[0][2]
 
     def create_csv(self):
-        print(self.station_data[0])
+        #print(self.station_data[0])
         f = open('master_data.csv', 'w', newline='')
         writer = csv.writer(f)
-        writer.writerow(['Name', '(Latitude, Longitude)', 'Lines','Alternate ID'])
+        writer.writerow(['Name', '(Latitude, Longitude)', 'Lines','Alternate ID', 'Northbound', 'Southbound'])
         for row in self.station_data:
             writer.writerow(row)
 
 #alt_id map format as follows (index, lines, name)
 
+'''sample usage
 sc = Station_Coords("stationCords.csv", "stop_locations.csv")
 print(f"index: {sc.get_index_by_alt_id('119S')}")
 print(f"name: {sc.get_name_by_alt_id('119S')}")
 sc.create_csv()
+'''
