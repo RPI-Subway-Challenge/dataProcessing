@@ -1,52 +1,16 @@
-from nyct_gtfs import NYCTFeed
-import config 
-import csv
+from NYC_Rest import NYC_Rest_API
+from station_coords_parse import Station_Coords
 
-#location_status = 'STOPPED_AT', 'INCOMING_AT', 'IN_TRANSIT_TO'
-class Live_Feed:
-    def __init__(self):
-        self.feed = NYCTFeed("A", config.MTA_API)
-        #parse stop_locations.csv
-        self.id_map = {}
-        with open("stop_locations.csv", "r") as file:
-            csv_reader = csv.reader(file)
-            header = next(csv_reader)
-            for row in csv_reader:
-                self.id_map[row[0]] = row[1]
+api = NYC_Rest_API()
+sc = Station_Coords("stationCords.csv", "stop_locations.csv")
 
-    def train_status(self, line: str, station: str, status: str):
-        self.feed = NYCTFeed(line, config.MTA_API)
-        self.feed.refresh()
-        trains = self.feed.trips
+i = 0
+for station in sc.station_data:
+    #station is [name, (lat, lon), lines, alt_id]
 
-        incoming_trains = set()
-
-        for train in trains:
-            if train.location_status == status \
-                and train.route_id == line \
-                and self.id_map[train.stop_time_updates[0].stop_id] == station:
-                incoming_trains.add(train)
-        return incoming_trains
-
-    #given a station on a line return all trains in transit to station
-    #stopped at the station or incoming to the station
-    #returns tuples of status and direction
-    def trains_to_station(self, line:str, station: str):
-        self.feed = NYCTFeed(line, config.MTA_API)
-        self.feed.refresh()
-        trains = self.feed.trips
-
-        incoming_trains = set()
-
-        for train in trains:
-            if train.route_id == line and \
-                self.id_map[train.stop_time_updates[0].stop_id] == station:
-                incoming_trains.add((train.location_status, train.direction))
-        return incoming_trains
-
-
-lf = Live_Feed()
-s = lf.trains_to_station("7", "Grand Central-42 St")
-print(s)
-
-
+    if len(station) > 3:
+        #print(f"alt_id: {station[3]}")
+        #print(f"i: {i}")
+        i+=1
+    else:
+        print(f"name: {station[0]}, coords: {station[1][0]}, {station[1][1]}")
