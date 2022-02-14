@@ -1,0 +1,5 @@
+ID,NAME,LAT,LONG,Lines,|,NEIGHBOR 1,DURATION 1,TYPE,|,NEIGHBOR 2,DURATION 2,TYPE
+1,TimeSq,0,0,bc,|,2,18,W,|,,,
+2,ColumbiaUni,3,4,ab,|,,,,|,,,
+3,GrandCentral,7,1,c,|,,,,|,,,
+4,5thAve,12,8,ca,|,,,,|,,,
