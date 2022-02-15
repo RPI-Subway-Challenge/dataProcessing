@@ -4,36 +4,13 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from station_coords_parse import Station_Coords
-from requests_html import HTMLSession
 import json
 
-#utilize https://rapidapi.com/mimouncadosch/api/nyc-subway-data/
-#to get data for all stations
-
-#url = "https://community-nyc-subway-data.p.rapidapi.com/api"
-#url = "mtaapi.herokuapp.com/api?id=120S"
-
-url = "https://community-nyc-subway-data.p.rapidapi.com/api"
-
-querystring = {"id":"A38S"}
-
-headers = {
-    'x-rapidapi-host': "community-nyc-subway-data.p.rapidapi.com",
-    'x-rapidapi-key': "29ee4e550fmsh06a9d49c4f34284p18e61cjsn43a8cb2cc768"
-    }
-
-response = requests.request("GET", url, headers=headers, params=querystring)
-
-print(response.text)
-
-dictionary = json.loads(response.text)
-print(response.text)
-print(len(dictionary['result']['arrivals']))
-
-coords = Station_Coords("stationCords.csv")
+coords = Station_Coords("stationCords.csv", "stop_locations.csv")
 
 #manual data entry of lines
-lines = {'8 Avenue Express': 'A', '6 Avenue Express': 'B', '8 Avenue Local': 'C',
+lines = {'A line': 'A', 'B line': 'B', 'C line': 'C'}
+line_names = {'8 Avenue Express': 'A', '6 Avenue Express': 'B', '8 Avenue Local': 'C',
          '6 Avenue Express': 'D', '8 Avenue Local': 'E', 
          'Queens Blvd Express/ 6 Av Local': 'F','Brooklyn F Express': 'F Express',
          'Brooklyn-Queens Crosstown': 'G', 'Nassau St Local': 'J',  
@@ -46,5 +23,44 @@ lines = {'8 Avenue Express': 'A', '6 Avenue Express': 'B', '8 Avenue Local': 'C'
          '6 Express': 'Pelham Bay Park Express', '7': 'Flushing Local', 
          '7 Express': 'Flushing Express'}
 
+PATH = "C:\Program Files (x86)\chromedriver.exe" #path on your machine
+driver = webdriver.Chrome(PATH)
+
+omny_url = "https://omny.info/schedules/new-york-city-subway"
+driver.get(omny_url)
+
+def get_alt(alt: str):
+    return '//img[@alt="' + alt + '"]'
+
+def iterate_line(line: str, name: str):
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+    spans = soup.find_all('span')
+    
+    is_station = False
+    for i in range(len(spans)):
+        span = spans[i]
+        if span.text == "New York City Subway":
+            i+=1
+            is_station = True
+            span = spans[i]
+        if span.text == "Save favorite":
+            is_station = False
+        if is_station and span.text != name:
+            print(span.text)
+
+
+def iterate_lines(lines: dict):
+    names = list(line_names.keys())
+    lines = list(lines.keys())
+    for i in range(len(lines)):
+        line = lines[i]
+        name = names[i]
+        link = driver.find_element(By.XPATH, get_alt(line))
+        link.click()
+        iterate_line(line, name)
+        driver.back()
+        print("")
+
 iterate_lines(lines)
+
 driver.close()
