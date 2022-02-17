@@ -113,7 +113,7 @@ class Station_Coords:
         id = self.get_station_id(station, line)
         station = self.station_data[id]
         neighbors = [neighbor_n, neighbor_s]
-        station.insert(4, neighbors)
+        station.append(neighbors)
         self.station_data[id] = station
 
     def create_csv(self):
