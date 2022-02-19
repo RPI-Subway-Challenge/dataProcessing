@@ -1,3 +1,5 @@
 config.py
 __pycache__/
 geckodriver.log
+node_modules/
+.vscode/

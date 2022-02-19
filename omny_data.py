@@ -39,6 +39,7 @@ def iterate_line(line: str, name: str):
     is_station = False
     for i in range(len(spans)):
         span = spans[i]
+        print(span.text)
         if span.text == "New York City Subway":
             i+=1
             is_station = True
