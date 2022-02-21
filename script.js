@@ -23,15 +23,17 @@ async function open_omny() {
 async function iterate_line(line) {
   console.log(line);
 
-  script =
-    "return window.getComputedStyle(document.querySelector('.span'),'::before').getPropertyValue('content')";
+  // script =
+  //   "return window.getComputedStyle(document.querySelector('.span'),'::before').getPropertyValue('content')";
 
-  var element = driver.executeScript(script);
+  // var element = driver.executeScript(script);
 
-  element.then(function (text) {
-    console.log(text);
-  });
-}
+  // element.then(function (text) {
+  //   console.log(text);
+  let overall_score = driver.executeScript("return [...document.querySelectorAll('.pages-schedules-__RouteStopsPage-module___station')].map(div => window.getComputedStyle(div,':before').content)");
+  console.log(overall_score);
+  // });
+};
 
 async function iterate_lines() {
   for (var key in lines) {
@@ -39,6 +41,7 @@ async function iterate_lines() {
     await driver.findElement(By.xpath(get_alt(key))).click();
     await iterate_line(lines[key]);
     await open_omny();
+    driver.back();
   }
 }
 

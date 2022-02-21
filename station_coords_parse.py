@@ -60,6 +60,8 @@ class Station_Coords:
 
     #given a station and a line, return station id
     def get_station_id(self, station: str, line: str) -> int:
+        if station not in self.index_map:
+            return -1
         stations = self.index_map[station]
         #same name stations are on different lines
         for s in stations: 
