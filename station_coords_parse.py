@@ -1,5 +1,6 @@
 import csv
 from decimal import *
+import difflib
 
 #use to parse station_coords.csv
 #class structure to use in other files
@@ -61,7 +62,11 @@ class Station_Coords:
     #given a station and a line, return station id
     def get_station_id(self, station: str, line: str) -> int:
         if station not in self.index_map:
-            return -1
+            closest_match = difflib.get_close_matches(station, list(self.index_map.keys()), 1)
+            if len(closest_match) == 0:
+                return -1
+            station = closest_match[0]
+        
         stations = self.index_map[station]
         #same name stations are on different lines
         for s in stations: 

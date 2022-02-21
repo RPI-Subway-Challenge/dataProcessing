@@ -48,6 +48,10 @@ def process_string(string: str):
     string = string.replace('Parkway', 'Pkwy')
     string = string.replace('Center', 'Ctr')
     string = string.replace('Square', 'Sq')
+    string = string.replace('Place', 'Pl')
+    string = string.replace('Road', 'Rd')
+    string = string.replace('East', 'E')
+    string = string.replace('West', 'W')
     return string
 
 def get_alt(alt: str):
@@ -77,9 +81,11 @@ def iterate_line(line: str, td_num: int):
         if not found_link:
             if len(row.find_all('th')) > 0:
                 th = row.find('th')
-                if th.text != "\n":
+                if th.text != "\n" and th.text != "":
                     station = process_string(th.text)
-        print(f"station name: {station}, index: {coords.get_station_id(station, line)}")
+        index = coords.get_station_id(station, line)
+        if index > -1:
+            print(f"station name: {station}, index: {index}")
         
 
 
