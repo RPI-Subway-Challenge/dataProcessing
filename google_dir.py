@@ -4,18 +4,21 @@ import pprint
 import config
 from config import API_KEY
 
-request_url = "https://maps.googleapis.com/maps/api/directions/json?"
+class Google_API:
+    def __init__(self):
+        self.request_url = "https://maps.googleapis.com/maps/api/directions/json?"
 #lat and long are flipped in stationCords.csv
-origin = "origin=40.85902199892482, -73.93417999964333"
-dest = "destination=40.851694999744616, -73.93796900205011"
 
-request_url = request_url + origin + "&" + dest + "&travel_mode=WALKING" + "&key=" + API_KEY
-test_url = "https://maps.googleapis.com/maps/api/directions/json?origin=Brooklyn&destination=Queens&mode=transit&key="
-test_url = test_url + API_KEY
+    def find_walking_seconds(self, coord_1: tuple, coord_2: tuple) -> int:
+        origin = "origin=" + str(coord_1[1]) + ', ' + str(coord_1[0])
+        dest = "destination=" + str(coord_2[1]) + ', ' + str(coord_2[0])
+        
+        req = self.request_url + origin + "&" + dest + "&travel_mode=WALKING" + "&key=" + API_KEY
+        payload = {}
+        headers = {}
 
-payload = {}
-headers = {}
+        response = requests.request("GET", req, headers=headers, data=payload)
+        res = response.json()
 
-response = requests.request("GET", request_url, headers=headers, data=payload)
-
-print(response.text)
+        seconds = res["routes"][0]["legs"][0]["duration"]["value"]
+        return seconds

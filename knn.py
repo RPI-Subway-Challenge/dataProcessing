@@ -52,6 +52,8 @@ class KNN:
             total_x += coord[0]
             total_y += coord[1]
         length = len(coords)
+        if length == 0:
+            return (0,0)
         return (total_x/ length, total_y / length)
 
     #returns n_neighbors groups of coordinates
@@ -74,10 +76,11 @@ class KNN:
             #readjust the centers
             for i in range(len(centers)):
                 centers[i] = self.generate_center(coords=buckets[i])
+        #print(centers)
 
         return buckets
 
-coords = [(-80,40), (-79,41), (-71, 44), (-72,45), (-78.5, 43.2), (-69, 44), (-73, 43)]
-cv = KNN(coords)
+# coords = [(-80,40), (-79,41), (-71, 44), (-72,45), (-78.5, 43.2), (-69, 44), (-73, 43)]
+# cv = KNN(coords)
 
-print(cv.find_knn(n_neighbors = 2))
+# print(cv.find_knn(n_neighbors = 2))
