@@ -15,13 +15,14 @@ buckets = cv.find_knn(n_neighbors=250)
 google = Google_API()
 
 filename = "walking_distance.txt"
-
+total = 0
 with open(filename, 'w') as file:
-    for bucket in buckets[:20]:
+    for bucket in buckets:
     #output file 
     #index_1, index_2, seconds
         if len(bucket) > 1:
-            print(len(bucket))
+            total += len(bucket)
+            print(total)
             for i in range(0, len(bucket) - 1):
                 station_i = bucket[i]
                 index_i = sc.get_index_from_coord(station_i)
@@ -32,5 +33,5 @@ with open(filename, 'w') as file:
 
                     s = google.find_walking_seconds(station_i, station_j)
                     print(f"{index_i}, {index_j}, {s}", file=file)
-                    print(f"station 1: {sc.station_data[index_i][0]}, station2: {sc.station_data[index_j][0]}")
+                    #print(f"station 1: {sc.station_data[index_i][0]}, station2: {sc.station_data[index_j][0]}")
 
