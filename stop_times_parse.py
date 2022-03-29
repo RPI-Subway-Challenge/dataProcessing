@@ -21,11 +21,11 @@ for row in csvreader:
     trip = trip_id.split('..')
     if "Weekday" in trip[0] and len(trip) > 1:
         line = trip[0][len(trip[0])-1]
-        print(trip[1])
+        #print(trip[1])
         direction = trip[1][0]
         #print(f"line: {line}")
         #print(f"Direction: {direction}")
-
+        line_dir = line+ "_" + direction
         #time
         time = row[1]
         #station id
@@ -33,9 +33,13 @@ for row in csvreader:
         id = sc.get_index_by_alt_id(alt_id)
         if id >= 0:
             if id not in data:
-                data[id]= {'S': [], 'N': []}
+                data[id]= {}
+                data[id][line_dir] = [time]
             else:
-                data[id][direction].append(time)
+                if line_dir in data[id]:
+                    data[id][line_dir].append(time)
+                else:
+                    data[id][line_dir] = [time]
 
 with open("times.json", "w") as output:
     json.dump(data, output)
